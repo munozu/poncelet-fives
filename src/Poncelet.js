@@ -6,6 +6,7 @@ const scaleX = 200
 const scaleY = 200
 
 export default function Poncelet() {
+	const [exportData, setExportData] = useState()
 	const [data, setData] = useState({
 			// Scaling variables
 			scaleX,
@@ -30,8 +31,8 @@ export default function Poncelet() {
 	return (
 		<>
 			<Sketch
-				setup={(cx, parentRef) => setup(cx, parentRef, data)}
-				draw={cx => draw(cx, data)}
+				setup={(cx, parentRef) => setup(cx, parentRef, { params: data, exportData: d => setExportData(d) })}
+				draw={cx => draw(cx, { params: data, exportData: d => setExportData(d) })}
 			/>
 			{Object.entries(data)
 					.filter(([key]) => [ 'pVal', 'qVal', 'wVal', 'hVal', 'tVal', ].includes(key))
@@ -53,6 +54,13 @@ export default function Poncelet() {
 				value={data.nVal}
 				onChange={onChange}
 			/>
+			{exportData && (
+				<div style={{ display: 'flex' }}>
+					<pre style={{width: 250, padding: 24, border: '1px solid #ddd'}}>ponceletOrbit: {JSON.stringify(exportData.ponceletOrbit, null, 2)}</pre>
+					<pre style={{width: 250, padding: 24, border: '1px solid #ddd'}}>angularDurations: {JSON.stringify(exportData.angularDurations, null, 2)}</pre>
+					<pre style={{width: 250, padding: 24, border: '1px solid #ddd'}}>euclideanDurations: {JSON.stringify(exportData.euclideanDurations, null, 2)}</pre>
+				</div>
+			)}
 		</>
 	)
 }

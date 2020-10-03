@@ -19,10 +19,11 @@ const DEFAULT_PARAMS = {
 // Orbit in global space
 let ponceletOrbit = [];
 
-// Use this to export orbit data 
-let dataExport = false;
+// Durations in global space
+let angularDurations = [];
+var euclideanDurations = [];
 
-export function setup(cx, ref, params = DEFAULT_PARAMS) {
+export function setup(cx, ref, { params = DEFAULT_PARAMS, exportData }) {
 	const { 
 		// Ellipse parameters (for testing) 
 		pVal, 
@@ -37,16 +38,21 @@ export function setup(cx, ref, params = DEFAULT_PARAMS) {
 		nVal,
 	} = params;
 
+
 	cx.createCanvas(500, 500).parent(ref);
 
 	ponceletOrbit = computeOrbit(cx, xInitial, yInitial, pVal, qVal, wVal, hVal, tVal, nVal);
 
-	if (dataExport) {
-		cx.saveJSON(ponceletOrbit, 'data.json');
-	}
+	angularDurations = computeAngularDurations(cx, ponceletOrbit);
+	euclideanDurations = computeEuclideanDurations(cx, ponceletOrbit);
+
+  if (exportData) {
+		exportData({ ponceletOrbit, angularDurations, euclideanDurations })
+  }
+
 }
 
-export function draw(cx, params = DEFAULT_PARAMS) {
+export function draw(cx, {params = DEFAULT_PARAMS, exportData}) {
 	const { 
 		// Scaling variables
 		sW1 = 2 / params.scaleX, 
@@ -60,7 +66,7 @@ export function draw(cx, params = DEFAULT_PARAMS) {
 		// Initial iterate (for testing)
 		xInitial,
 		yInitial,
-		// Number of points in orbit (for testing)
+		// Number of points in orbit (for testing) nVal,
 		nVal,
 	} = params;
 
@@ -116,9 +122,52 @@ export function draw(cx, params = DEFAULT_PARAMS) {
 	cx.pop();
 
 	ponceletOrbit = computeOrbit(cx, xInitial, yInitial, pVal, qVal, wVal, hVal, tVal, nVal);
+	angularDurations = computeAngularDurations(cx, ponceletOrbit);
+	euclideanDurations = computeEuclideanDurations(cx, ponceletOrbit);
 
 	drawOrbit(ponceletOrbit);
+
+  if (exportData) {
+		exportData({ ponceletOrbit,angularDurations,euclideanDurations })
+  }
+
 }
+
+	function computeAngularDurations(cx, orbit) {
+		let orbitLength = orbit.length;
+		let durations = [];
+		for (let i=0; i<orbitLength; i++) {
+			if (i<orbitLength-1) {
+				durations[i] = angularDistance(cx,orbit[i][0],orbit[i][1],orbit[i+1][0],orbit[i+1][1]);
+			} else {
+				durations[i] = angularDistance(cx,orbit[0][0],orbit[0][1],orbit[orbitLength-1][0],orbit[orbitLength-1][1]);
+			}
+
+		}
+		return durations;	
+	}
+
+	function computeEuclideanDurations(cx, orbit) {
+		let orbitLength = orbit.length;
+		let durations = [];
+		for (let i=0; i<orbitLength; i++) {
+			if (i<orbitLength-1) {
+				durations[i] = euclideanDistance(cx,orbit[i][0],orbit[i][1],orbit[i+1][0],orbit[i+1][1]);
+			} else {
+				durations[i] = euclideanDistance(cx,orbit[0][0],orbit[0][1],orbit[orbitLength-1][0],orbit[orbitLength-1][1]);
+			}
+
+		}
+		return durations;	
+	}
+
+	function angularDistance(cx,x0,y0,x1,y1) {
+		return cx.abs(cx.atan2(y0,x0) - cx.atan2(y1,x1));
+	}
+
+	function euclideanDistance(cx,x0,y0,x1,y1) {
+		return cx.sqrt(cx.pow(x1-x0,2) + cx.pow(y1-y0,2));
+	}
 
 
 // See comment above definition of ponceletIterate function

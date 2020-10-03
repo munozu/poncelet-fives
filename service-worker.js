@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/poncelet-fives/precache-manifest.927700f3907898d54eda6a036670f881.js"
+  "/poncelet-fives/precache-manifest.354f38c7d30d2abeed41e0f46dcbf218.js"
 );
 
 self.addEventListener('message', (event) => {

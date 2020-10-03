@@ -29,50 +29,45 @@ export default function Poncelet() {
 	const onChange = (d) => setData((p) => ({ ...p, ...d }));
 
 	return (
-		<>
-			<Sketch
-				setup={(cx, parentRef) =>
-						setup(cx, parentRef, {
-							params: data,
-							exportData: (d) => setExportData(d),
-						})
-				}
-				draw={(cx) =>
-						draw(cx, { params: data, exportData: (d) => setExportData(d) })
-				}
-			/>
-			{Object.entries(data)
-					.filter(([key]) =>
-						["pVal", "qVal", "wVal", "hVal", "tVal"].includes(key)
-					)
-					.map((d) => {
-						const [k, v] = d;
-						return <Input name={k} value={v} onChange={onChange} />;
-					})}
-			<Input
-				name="nVal"
-				min={1}
-				step={1}
-				max={100}
-				value={data.nVal}
-				onChange={onChange}
-			/>
+		<div style={{display: 'flex'}}>
+			<div>
+				<Sketch 
+					setup={(cx, parentRef) => setup(cx, parentRef, { params: data, exportData: (d) => setExportData(d), })}
+					draw={(cx) => draw(cx, { params: data, exportData: (d) => setExportData(d) }) }
+				/>
+				{Object.entries(data)
+						.filter(([key]) =>
+							["pVal", "qVal", "wVal", "hVal", "tVal"].includes(key)
+						)
+						.map((d) => {
+							const [k, v] = d;
+							return <Input name={k} value={v} onChange={onChange} />;
+						})}
+				<Input
+					name="nVal"
+					min={1}
+					step={1}
+					max={100}
+					value={data.nVal}
+					onChange={onChange}
+				/>
+			</div>
 			{exportData && (
 				<div style={{ display: "flex" }}>
-					<pre style={{ width: 250, padding: 24, border: "1px solid #ddd" }}>
+					<pre style={{ margin: 0, width: 250, padding: 24, border: "1px solid #ddd" }}>
 						ponceletOrbit: {JSON.stringify(exportData.ponceletOrbit, null, 2)}
 					</pre>
-					<pre style={{ width: 250, padding: 24, border: "1px solid #ddd" }}>
+					<pre style={{ margin: 0, width: 250, padding: 24, border: "1px solid #ddd" }}>
 						angularDurations:{" "}
 						{JSON.stringify(exportData.angularDurations, null, 2)}
 					</pre>
-					<pre style={{ width: 250, padding: 24, border: "1px solid #ddd" }}>
+					<pre style={{ margin: 0, width: 250, padding: 24, border: "1px solid #ddd" }}>
 						euclideanDurations:{" "}
 						{JSON.stringify(exportData.euclideanDurations, null, 2)}
 					</pre>
 				</div>
 			)}
-		</>
+		</div>
 	);
 }
 

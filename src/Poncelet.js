@@ -76,7 +76,7 @@ export default function Poncelet() {
 	);
 }
 
-function Input({ name, min = -1, max = 1, step = 0.01, value, onChange }) {
+function Input({ name, min = -1, max = 1, step = 0.001, value, onChange }) {
 	const [inputValue = "", setInputValue] = useState(value);
 	const onInputChange = (e) => {
 		const value = Number(e.target.value);
